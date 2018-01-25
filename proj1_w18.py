@@ -1,5 +1,6 @@
 import math # for length calculation
 
+# Media
 class Media:
 
 	def __init__(self, title = "No Title", author = "No Author", year = "No Year"):
@@ -13,9 +14,7 @@ class Media:
 	def __len__(self):
 		return 0
 
-
 ## Other classes, functions, etc. should go here
-
 # Song (subclass of Media)
 class Song(Media):
 
