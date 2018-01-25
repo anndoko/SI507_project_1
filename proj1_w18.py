@@ -1,3 +1,4 @@
+import math # for length calculation
 
 class Media:
 
@@ -34,14 +35,17 @@ class Song(Media):
 # Movie (subclass of Media)
 class Movie(Media):
 
-	def __init__(self):
-		pass
+	def __init__(self, rating = "No Rating", movie_len = 0):
+		super().__init__()
+		self.rating = rating
+		self.len = movie_len
 
 	def __str__(self):
-		pass
+		return super().__str__() + " []".format(self.rating)
 
 	def __len__(self):
-		pass
+		len_in_mins = math.ceil(self.len / 1000 / 60) # round time to the nearest minute
+		return len_in_mins
 
 if __name__ == "__main__":
 	# your control code for Part 4 (interactive search) should go here
