@@ -14,11 +14,11 @@ class Media:
 
 
 ## Other classes, functions, etc. should go here
-#
+
 # Song (subclass of Media)
 class Song(Media):
 
-	def __init__(self, title = "No Title", author = "No Author", year = "No Year", album = "No Album", genre = "No Genre", track_len = 0):
+	def __init__(self, album = "No Album", genre = "No Genre", track_len = 0):
 		super().__init__()
 		self.album = album
 		self.genre = genre
@@ -31,6 +31,17 @@ class Song(Media):
 		len_in_secs = self.len / 1000
 		return len_in_secs
 
+# Movie (subclass of Media)
+class Movie(Media):
+
+	def __init__(self):
+		pass
+
+	def __str__(self):
+		pass
+
+	def __len__(self):
+		pass
 
 if __name__ == "__main__":
 	# your control code for Part 4 (interactive search) should go here
