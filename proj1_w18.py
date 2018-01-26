@@ -5,19 +5,28 @@ import json
 
 # Media
 class Media:
-    def __init__(self, title = "No Title", author = "No Author", year = "No Year", json_dic = None):
+    def __init__(self, title = "No Title", author = "No Author", year = "No Year", url = "No URL", json_dic = None):
         if json_dic is None:
             self.title = title
             self.author = author
             self.release_year = year
+            self.info = url
         elif json_dic["wrapperType"] != "track":
             self.title = json_dic["collectionName"]
             self.author = json_dic["artistName"]
-            self.release_year = json_dic["releaseDate"][0:4]
+            self.release_year = json_dic["releaseDate"][0:4] # get year only
+            if "trackViewUrl" in json_dic: # if trackViewUrl is available, assign it to self.info
+                self.info = json_dic["trackViewUrl"]
+            else:
+                self.info = "No URL"
         else:
             self.title = json_dic["trackName"]
             self.author = json_dic["artistName"]
-            self.release_year = json_dic["releaseDate"][0:4]
+            self.release_year = json_dic["releaseDate"][0:4] # get year only
+			if "trackViewUrl" in json_dic:
+                self.info = json_dic["trackViewUrl"] # if trackViewUrl is available, assign it to self.info
+            else:
+                self.info = "No URL"
 
     def __str__(self):
         return "{} by {} ({})".format(self.title, self.author, self.release_year)
@@ -28,8 +37,8 @@ class Media:
 ## Other classes, functions, etc. should go here
 # Song (subclass of Media)
 class Song(Media):
-    def __init__(self, title = "No Title", author = "No Author", year = "No Year", album = "No Album", genre = "No Genre", track_len = "N/A", json_dic = None):
-        super().__init__(title, author, year, json_dic)
+    def __init__(self, title = "No Title", author = "No Author", year = "No Year", url = "No URL", album = "No Album", genre = "No Genre", track_len = "N/A", json_dic = None):
+        super().__init__(title, author, year, url, json_dic)
         if json_dic is None:
             self.album = album
             self.genre = genre
@@ -48,8 +57,8 @@ class Song(Media):
 
 # Movie (subclass of Media)
 class Movie(Media):
-    def __init__(self, title = "No Title", author = "No Author", year = "No Year", rating = "No Rating", movie_len = "N/A", json_dic = None):
-        super().__init__(title, author, year, json_dic)
+    def __init__(self, title = "No Title", author = "No Author", year = "No Year", url = "No URL", rating = "No Rating", movie_len = "N/A", json_dic = None):
+        super().__init__(title, author, year, url, json_dic)
         if json_dic is None:
             self.rating = rating
             self.len = movie_len
@@ -134,39 +143,49 @@ def request_itunes_data(search_string):
 # print(s1.__len__())
 # print(o1.__len__())
 
+# check if user input is an integer
+def check_if_num(user_input):
+    try:
+        int(user_input)
+        return True
+    except:
+        return False
+
 if __name__ == "__main__":
-	# your control code for Part 4 (interactive search) should go here
+    # your control code for Part 4 (interactive search) should go here
+    # prompt user for input
+    user_input = ""
+    user_input = input("Enter a search term, or 'exit' to quit: ")
 
-	# prompt user for input
-	user_input = ""
-	user_input = input("Enter a search term, or 'exit' to quit: ")
+    while user_input != "exit": # end the program if user enters "exist"
 
-	while user_input != "exit": # end the program if user enters "exist"
+        # if user input is num, launch the link
+		# otherwise, make data using the string
+        if check_if_num(user_input):
+            info_request = instance_lst[int(user_input)]
+            print("Launching")
+            print(info_request.info)
+            print("in web browser...")
+        else:
+            data = request_itunes_data(user_input) # request data
+            user_search_results = data["results"] # get the dics
 
-		try:
-			if int(user_input):
-				print("Launching")
-				print("in web browser...")
-		except:
-			data = request_itunes_data(user_input) # request data
-			user_search_results = data["results"] # get the dics
+            instance_lst = ["index: 0"]
 
-			instance_lst = ["index: 0"]
+            for dic in user_search_results:
+                if "kind" in user_search_results:
+                    if dic["kind"] == "song":
+                        instance_lst.append(Song(json_dic = dic))
+                    elif dic["kind"] == "feature-movie":
+                        instance_lst.append(Movie(json_dic = dic))
+                else:
+                    instance_lst.append(Media(json_dic = dic))
 
-			for dic in user_search_results:
-				if "kind" in user_search_results:
-					if dic["kind"] == "song":
-						instance_lst.append(Song(json_dic = dic))
-					elif dic["kind"] == "feature-movie":
-						instance_lst.append(Movie(json_dic = dic))
-				else:
-					instance_lst.append(Media(json_dic = dic))
-
-			for instance in instance_lst[1:]:
-				print(instance_lst.index(instance), instance)
+            for instance in instance_lst[1:]:
+                print(instance_lst.index(instance), instance)
 
 		# prompt user for input again
-		user_input = input("Enter a number for more info, or another search term, or exit: ")
+        user_input = input("Enter a number for more info, or another search term, or exit: ")
 
 	# end the program
-	print("Bye!")
+    print("Bye!")
