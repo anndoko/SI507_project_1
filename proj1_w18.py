@@ -142,34 +142,31 @@ if __name__ == "__main__":
 	user_input = input("Enter a search term, or 'exit' to quit: ")
 
 	while user_input != "exit": # end the program if user enters "exist"
-		data = request_itunes_data(user_input) # request data
-		user_search_results = data["results"] # get the dics
 
-		song_lst = []
-		movie_lst = []
-		other_lst = []
+		try:
+			if int(user_input):
+				print("Launching")
+				print("in web browser...")
+		except:
+			data = request_itunes_data(user_input) # request data
+			user_search_results = data["results"] # get the dics
 
-		for result in user_search_results:
-			if "kind" in result:
-				if result["kind"] == "song":
-					song_lst.append(Song(json_dic = result))
-				if result["kind"] == "feature-movie":
-					movie_lst.append(Movie(json_dic = result))
+			instance_lst = ["index: 0"]
 
-			if "kind" not in result:
-				other_lst.append(Media(json_dic = result))
+			for dic in user_search_results:
+				if "kind" in user_search_results:
+					if dic["kind"] == "song":
+						instance_lst.append(Song(json_dic = dic))
+					elif dic["kind"] == "feature-movie":
+						instance_lst.append(Movie(json_dic = dic))
+				else:
+					instance_lst.append(Media(json_dic = dic))
 
-		# SONG:
-		print("\nSONG")
-		for song in song_lst:
-			print(song)
+			for instance in instance_lst[1:]:
+				print(instance_lst.index(instance), instance)
 
-		# MOVIE:
-		print("\nMOVIE")
-		for movie in movie_lst:
-			print(movie)
+		# prompt user for input again
+		user_input = input("Enter a number for more info, or another search term, or exit: ")
 
-		# OTHER MEDIA:
-		print("\nOTHER MEDIA")
-		for media in other_lst:
-			print(media)
+	# end the program
+	print("Bye!")
