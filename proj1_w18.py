@@ -135,36 +135,41 @@ def request_itunes_data(search_string):
 # print(o1.__len__())
 
 if __name__ == "__main__":
-    # your control code for Part 4 (interactive search) should go here
+	# your control code for Part 4 (interactive search) should go here
+
+	# prompt user for input
+	user_input = ""
 	user_input = input("Enter a search term, or 'exit' to quit: ")
-	data = request_itunes_data(user_input)
-	user_search_results = data["results"]
 
-	song_lst = []
-	movie_lst = []
-	other_lst = []
+	while user_input != "exit": # end the program if user enters "exist"
+		data = request_itunes_data(user_input) # request data
+		user_search_results = data["results"] # get the dics
 
-	for result in user_search_results:
-		if "kind" in result:
-			if result["kind"] == "song":
-				song_lst.append(Song(json_dic = result))
-			if result["kind"] == "feature-movie":
-				movie_lst.append(Movie(json_dic = result))
+		song_lst = []
+		movie_lst = []
+		other_lst = []
 
-		if "kind" not in result:
-			other_lst.append(Media(json_dic = result))
+		for result in user_search_results:
+			if "kind" in result:
+				if result["kind"] == "song":
+					song_lst.append(Song(json_dic = result))
+				if result["kind"] == "feature-movie":
+					movie_lst.append(Movie(json_dic = result))
 
-	# SONG:
-	print("\nSONG")
-	for song in song_lst:
-		print(song)
+			if "kind" not in result:
+				other_lst.append(Media(json_dic = result))
 
-	# MOVIE:
-	print("\nMOVIE")
-	for movie in movie_lst:
-		print(movie)
+		# SONG:
+		print("\nSONG")
+		for song in song_lst:
+			print(song)
 
-	# OTHER MEDIA:
-	print("\nOTHER MEDIA")
-	for media in other_lst:
-		print(media)
+		# MOVIE:
+		print("\nMOVIE")
+		for movie in movie_lst:
+			print(movie)
+
+		# OTHER MEDIA:
+		print("\nOTHER MEDIA")
+		for media in other_lst:
+			print(media)
