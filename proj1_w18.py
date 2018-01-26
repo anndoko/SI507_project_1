@@ -2,6 +2,7 @@
 import math # for length calculation
 import requests
 import json
+import webbrowser # for launching the url
 
 # Media
 class Media:
@@ -23,7 +24,7 @@ class Media:
             self.title = json_dic["trackName"]
             self.author = json_dic["artistName"]
             self.release_year = json_dic["releaseDate"][0:4] # get year only
-			if "trackViewUrl" in json_dic:
+            if "trackViewUrl" in json_dic:
                 self.info = json_dic["trackViewUrl"] # if trackViewUrl is available, assign it to self.info
             else:
                 self.info = "No URL"
@@ -163,9 +164,13 @@ if __name__ == "__main__":
 		# otherwise, make data using the string
         if check_if_num(user_input):
             info_request = instance_lst[int(user_input)]
-            print("Launching")
-            print(info_request.info)
-            print("in web browser...")
+            try:
+                webbrowser.open_new(info_request.info) # open URL
+                print("Launching")
+                print(info_request.info)
+                print("in web browser...")
+            except:
+                print("No URL is available.")
         else:
             data = request_itunes_data(user_input) # request data
             user_search_results = data["results"] # get the dics
