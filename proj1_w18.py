@@ -128,22 +128,6 @@ def request_itunes_data(search_string):
 
         return CACHE_DICTION[unique_id]
 
-# # test the code
-# # use sample_json.json
-# data = json.load(open('sample_json.json'))
-# m1 = Movie(json_dic = data[0])
-# s1 = Song(json_dic = data[1])
-# o1 = Media(json_dic = data[2])
-# print(m1)
-# print(s1)
-# print(o1)
-# print(m1.__str__())
-# print(s1.__str__())
-# print(o1.__str__())
-# print(m1.__len__())
-# print(s1.__len__())
-# print(o1.__len__())
-
 # check if user input is an integer
 def check_if_num(user_input):
     try:
