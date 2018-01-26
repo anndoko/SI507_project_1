@@ -4,7 +4,8 @@ import requests
 import json
 import webbrowser # for launching the url
 
-# Media
+# ==================== Define Class & Subclasses ====================
+## Media
 class Media:
 	def __init__(self, title = "No Title", author = "No Author", year = "No Year", url = "No URL", json_dic = None):
 		if json_dic is None:
@@ -29,6 +30,10 @@ class Media:
 			else:
 				self.info = "No URL"
 
+		# OFFICE HOURS:
+		# use if/else to deal with the title only
+		# avoid repeating the code
+
 	def __str__(self):
 		return "{} by {} ({})".format(self.title, self.author, self.release_year)
 
@@ -36,7 +41,7 @@ class Media:
 		return "N/A"
 
 ## Other classes, functions, etc. should go here
-# Song (subclass of Media)
+### Song (subclass of Media)
 class Song(Media):
 	def __init__(self, title = "No Title", author = "No Author", year = "No Year", url = "No URL", album = "No Album", genre = "No Genre", track_len = "N/A", json_dic = None):
 		super().__init__(title, author, year, url, json_dic)
@@ -56,7 +61,7 @@ class Song(Media):
 		len_in_secs = int(self.len / 1000)
 		return len_in_secs
 
-# Movie (subclass of Media)
+### Movie (subclass of Media)
 class Movie(Media):
 	def __init__(self, title = "No Title", author = "No Author", year = "No Year", url = "No URL", rating = "No Rating", movie_len = "N/A", json_dic = None):
 		super().__init__(title, author, year, url, json_dic)
@@ -74,8 +79,8 @@ class Movie(Media):
 		len_in_mins = math.ceil(self.len / 1000 / 60) # round time to the nearest minute
 		return len_in_mins
 
-# use iTunes API
-# data request & caching
+# ==================== iTunes API ====================
+## data request & caching
 itunes_cache_file = "SI507_proj1_cache.json" # set up a file for caching
 try:
 	cache_file = open(itunes_cache_file, 'r')
@@ -85,7 +90,7 @@ try:
 except:
 	CACHE_DICTION = {}
 
-# to generate a unique id of a request
+## to generate a unique id of a request
 def unique_id_generator(base_url, params_diction):
 	alphabetized_keys = sorted(params_diction.keys())
 	lst = []
@@ -98,7 +103,7 @@ def unique_id_generator(base_url, params_diction):
 	# return a unique id of the request
 	return unique_id
 
-# get data from the iTunes API
+## get data from the iTunes API
 def request_itunes_data(search_string):
 	# set up the base URL
 	base_url = "https://itunes.apple.com/search"
@@ -128,7 +133,8 @@ def request_itunes_data(search_string):
 
 		return CACHE_DICTION[unique_id]
 
-# check if user input is an integer
+# ==================== Other Function  ====================
+## check if user input is an integer
 def check_if_num(user_input):
 	try:
 		int(user_input)
@@ -169,6 +175,10 @@ if __name__ == "__main__":
 						instance_lst.append(Movie(json_dic = dic))
 				else:
 					instance_lst.append(Media(json_dic = dic))
+
+			# OFFICE HOURS:
+			# have three separate lists
+			# set an integer to count the index instead
 
 			for instance in instance_lst[1:]:
 				print(instance_lst.index(instance), instance)

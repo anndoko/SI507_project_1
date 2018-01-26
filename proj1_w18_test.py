@@ -79,4 +79,10 @@ class TestMovie(unittest.TestCase):
         self.assertEqual(mv2.__str__(), "Battle of the Sexes by Jonathan Dayton, Valerie Faris (2017) [PG-13]")
         self.assertEqual(mv2.__len__(), 121)
 
+
+	# OFFICE HOURS:
+	# use the json file provided by the class to test Part 2.
+	# for Part 3. test if the functions work and if the number of the results exceed the range
+    # should be 50 or less
+
 unittest.main()
