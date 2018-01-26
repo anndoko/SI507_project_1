@@ -5,7 +5,6 @@ import json
 
 # Media
 class Media:
-
     def __init__(self, title = "No Title", author = "No Author", year = "No Year", json_dic = None):
         if json_dic is None:
             self.title = title
@@ -29,7 +28,6 @@ class Media:
 ## Other classes, functions, etc. should go here
 # Song (subclass of Media)
 class Song(Media):
-
     def __init__(self, title = "No Title", author = "No Author", year = "No Year", album = "No Album", genre = "No Genre", track_len = "N/A", json_dic = None):
         super().__init__(title, author, year, json_dic)
         if json_dic is None:
@@ -50,7 +48,6 @@ class Song(Media):
 
 # Movie (subclass of Media)
 class Movie(Media):
-
     def __init__(self, title = "No Title", author = "No Author", year = "No Year", rating = "No Rating", movie_len = "N/A", json_dic = None):
         super().__init__(title, author, year, json_dic)
         if json_dic is None:
@@ -92,7 +89,7 @@ def unique_id_generator(base_url, params_diction):
     return unique_id
 
 # get data from the iTunes API
-def request_itunes_data(search_string, search_type = "song"):
+def request_itunes_data(search_string):
     # set up the base URL
     base_url = "https://itunes.apple.com/search"
 
@@ -100,7 +97,6 @@ def request_itunes_data(search_string, search_type = "song"):
     params_diction = {}
     params_diction["format"] = "json"
     params_diction["term"] = search_string
-    params_diction["entity"] = search_type
 
     # generate a unique id of this search
     unique_id = unique_id_generator(base_url, params_diction)
@@ -140,4 +136,35 @@ def request_itunes_data(search_string, search_type = "song"):
 
 if __name__ == "__main__":
     # your control code for Part 4 (interactive search) should go here
-    pass
+	user_input = input("Enter a search term, or 'exit' to quit: ")
+	data = request_itunes_data(user_input)
+	user_search_results = data["results"]
+
+	song_lst = []
+	movie_lst = []
+	other_lst = []
+
+	for result in user_search_results:
+		if "kind" in result:
+			if result["kind"] == "song":
+				song_lst.append(Song(json_dic = result))
+			if result["kind"] == "feature-movie":
+				movie_lst.append(Movie(json_dic = result))
+
+		if "kind" not in result:
+			other_lst.append(Media(json_dic = result))
+
+	# SONG:
+	print("\nSONG")
+	for song in song_lst:
+		print(song)
+
+	# MOVIE:
+	print("\nMOVIE")
+	for movie in movie_lst:
+		print(movie)
+
+	# OTHER MEDIA:
+	print("\nOTHER MEDIA")
+	for media in other_lst:
+		print(media)
