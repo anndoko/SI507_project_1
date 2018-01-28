@@ -194,7 +194,7 @@ if __name__ == "__main__":
 			# OTHER MEDIA:
 			print("\nOTHER MEDIA")
 			for media in other_lst:
-				print(media)
+				print(index_num, media)
 				index_num += 1
 
 		# prompt user for input again
