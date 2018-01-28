@@ -146,7 +146,20 @@ if __name__ == "__main__":
 		# if user input is num, launch the link
 		# otherwise, make data using the string
 		if check_if_num(user_input):
-			info_request = instance_lst[int(user_input)]
+			# convert str to int and get the real index
+			index = int(user_input) - 1
+
+			# locate the data by checking the real index
+			if index < len(song_lst):
+				info_request = song_lst[index]
+			elif index < (len(song_lst) + len(movie_lst)):
+				index -= (len(song_lst) + len(movie_lst))
+				info_request = movie_lst[index]
+			else:
+				index -= (len(song_lst) + len(movie_lst) + len(other_lst))
+				info_request = other_lst[index]
+
+			# try use the url and open it in user's default web browser
 			try:
 				webbrowser.open_new(info_request.info) # open URL
 				print("Launching")
