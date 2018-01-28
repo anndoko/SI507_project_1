@@ -14,18 +14,20 @@ class Media:
 			self.release_year = year
 			self.info = url
 		else:
+			# for results that are not tracks, assign the value of collectionName
+			if json_dic["wrapperType"] != "track":
+				self.title = json_dic["collectionName"]
+			else:
+
+				self.title = json_dic["trackName"]
+			# assign values to author, and release_year
 			self.author = json_dic["artistName"]
 			self.release_year = json_dic["releaseDate"][0:4] # get year only
-			if "trackViewUrl" in json_dic: # if trackViewUrl is available, assign it to self.info
+			# if trackViewUrl is available, assign it to self.info
+			if "trackViewUrl" in json_dic:
 				self.info = json_dic["trackViewUrl"]
 			else:
 				self.info = url
-
-		# for results that are not tracks, assign the value of collectionName
-		if json_dic["wrapperType"] != "track":
-			self.title = json_dic["collectionName"]
-		else:
-			self.title = json_dic["trackName"]
 
 	def __str__(self):
 		return "{} by {} ({})".format(self.title, self.author, self.release_year)
@@ -51,8 +53,11 @@ class Song(Media):
 		return super().__str__() + " [{}]".format(self.genre)
 
 	def __len__(self):
-		len_in_secs = int(self.len / 1000)
-		return len_in_secs
+		if self.len != "N/A":
+			len_in_secs = int(self.len / 1000)
+			return len_in_secs
+		else:
+			return "N/A"
 
 ### Movie (subclass of Media)
 class Movie(Media):
@@ -69,8 +74,11 @@ class Movie(Media):
 		return super().__str__() + " [{}]".format(self.rating)
 
 	def __len__(self):
-		len_in_mins = math.ceil(self.len / 1000 / 60) # round time to the nearest minute
-		return len_in_mins
+		if self.len != "N/A":
+			len_in_mins = math.ceil(self.len / 1000 / 60) # round time to the nearest minute
+			return len_in_mins
+		else:
+			return "N/A"
 
 # ==================== iTunes API ====================
 ## data request & caching
