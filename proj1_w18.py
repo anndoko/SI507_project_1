@@ -176,20 +176,26 @@ if __name__ == "__main__":
 				if "kind" not in result:
 					other_lst.append(Media(json_dic = result))
 
+			# set an integer variable for indexing
+			index_num = 1
+
 			# SONG:
 			print("\nSONG")
 			for song in song_lst:
-				print(song)
+				print(index_num, song)
+				index_num += 1
 
 			# MOVIE:
 			print("\nMOVIE")
 			for movie in movie_lst:
-				print(movie)
+				print(index_num, movie)
+				index_num += 1
 
 			# OTHER MEDIA:
 			print("\nOTHER MEDIA")
 			for media in other_lst:
 				print(media)
+				index_num += 1
 
 		# prompt user for input again
 		user_input = input("Enter a number for more info, or another search term, or exit: ")
