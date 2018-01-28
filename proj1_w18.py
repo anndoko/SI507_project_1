@@ -158,23 +158,38 @@ if __name__ == "__main__":
 			data = request_itunes_data(user_input) # request data
 			user_search_results = data["results"] # get the dics
 
-			instance_lst = ["index: 0"]
+			# create 3 lists for instances of Song, Movie, and Other Media
+			song_lst = []
+			movie_lst = []
+			other_lst = []
 
-			for dic in user_search_results:
-				if "kind" in user_search_results:
-					if dic["kind"] == "song":
-						instance_lst.append(Song(json_dic = dic))
-					elif dic["kind"] == "feature-movie":
-						instance_lst.append(Movie(json_dic = dic))
-				else:
-					instance_lst.append(Media(json_dic = dic))
+			for result in user_search_results:
+				# if result is song/movie, create an instance of Song/Movie
+				# and add the instance to the song_lst/movie_lst
+				if "kind" in result:
+					if result["kind"] == "song":
+						song_lst.append(Song(json_dic = result))
+					if result["kind"] == "feature-movie":
+						movie_lst.append(Movie(json_dic = result))
 
-			# OFFICE HOURS:
-			# have three separate lists
-			# set an integer to count the index instead
+				# other types of results go to the other_lst
+				if "kind" not in result:
+					other_lst.append(Media(json_dic = result))
 
-			for instance in instance_lst[1:]:
-				print(instance_lst.index(instance), instance)
+			# SONG:
+			print("\nSONG")
+			for song in song_lst:
+				print(song)
+
+			# MOVIE:
+			print("\nMOVIE")
+			for movie in movie_lst:
+				print(movie)
+
+			# OTHER MEDIA:
+			print("\nOTHER MEDIA")
+			for media in other_lst:
+				print(media)
 
 		# prompt user for input again
 		user_input = input("Enter a number for more info, or another search term, or exit: ")
