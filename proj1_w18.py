@@ -8,31 +8,24 @@ import webbrowser # for launching the url
 ## Media
 class Media:
 	def __init__(self, title = "No Title", author = "No Author", year = "No Year", url = "No URL", json_dic = None):
-		if json_dic is None:
+		if json_dic is None: # if there's no json dic, the default values are assigned
 			self.title = title
 			self.author = author
 			self.release_year = year
 			self.info = url
-		elif json_dic["wrapperType"] != "track":
-			self.title = json_dic["collectionName"]
+		else:
 			self.author = json_dic["artistName"]
 			self.release_year = json_dic["releaseDate"][0:4] # get year only
 			if "trackViewUrl" in json_dic: # if trackViewUrl is available, assign it to self.info
 				self.info = json_dic["trackViewUrl"]
 			else:
-				self.info = "No URL"
+				self.info = url
+
+		# for results that are not tracks, assign the value of collectionName
+		if json_dic["wrapperType"] != "track":
+			self.title = json_dic["collectionName"]
 		else:
 			self.title = json_dic["trackName"]
-			self.author = json_dic["artistName"]
-			self.release_year = json_dic["releaseDate"][0:4] # get year only
-			if "trackViewUrl" in json_dic:
-				self.info = json_dic["trackViewUrl"] # if trackViewUrl is available, assign it to self.info
-			else:
-				self.info = "No URL"
-
-		# OFFICE HOURS:
-		# use if/else to deal with the title only
-		# avoid repeating the code
 
 	def __str__(self):
 		return "{} by {} ({})".format(self.title, self.author, self.release_year)
