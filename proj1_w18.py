@@ -18,7 +18,6 @@ class Media:
             if json_dic["wrapperType"] != "track":
                 self.title = json_dic["collectionName"]
             else:
-
                 self.title = json_dic["trackName"]
             # assign values to author, and release_year
             self.author = json_dic["artistName"]
@@ -143,6 +142,17 @@ def check_if_num(user_input):
     except:
         return False
 
+## check if url is available and launch it in user's default browser
+def launch_url(url):
+    if url != "No URL":
+        webbrowser.open_new(url) # open URL
+        print("Launching")
+        print(url)
+        print("in web browser...")
+    else:
+        print("No URL is available.")
+
+
 if __name__ == "__main__":
     # your control code for Part 4 (interactive search) should go here
     # prompt user for input
@@ -168,13 +178,8 @@ if __name__ == "__main__":
                 info_request = other_lst[index]
 
             # try use the url and open it in user's default web browser
-            try:
-                webbrowser.open_new(info_request.info) # open URL
-                print("Launching")
-                print(info_request.info)
-                print("in web browser...")
-            except:
-                print("No URL is available.")
+            launch_url(info_request.info)
+
         else:
             data = request_itunes_data(user_input) # request data
             user_search_results = data["results"] # get the dics
