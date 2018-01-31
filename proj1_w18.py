@@ -19,9 +19,11 @@ class Media:
                 self.title = json_dic["collectionName"]
             else:
                 self.title = json_dic["trackName"]
+
             # assign values to author, and release_year
             self.author = json_dic["artistName"]
             self.release_year = json_dic["releaseDate"][0:4] # get year only
+
             # if trackViewUrl is available, assign it to self.info
             if "trackViewUrl" in json_dic:
                 self.info = json_dic["trackViewUrl"]
@@ -81,7 +83,7 @@ class Movie(Media):
 
 # ==================== iTunes API ====================
 ## data request & caching
-itunes_cache_file = "SI507_proj1_cache.json" # set up a file for caching
+itunes_cache_file = "proj1_cache.json" # set up a file for caching
 try:
     cache_file = open(itunes_cache_file, 'r')
     cache_content = cache_file.read()
@@ -97,11 +99,9 @@ def unique_id_generator(base_url, params_diction):
     for key in alphabetized_keys:
         lst.append("{}-{}".format(key, params_diction[key]))
 
-    # combine the baseurl and the formatted pairs of keys and values
-    unique_id = base_url + "_".join(lst)
+    unique_id = base_url + "_".join(lst) # combine the baseurl and the formatted pairs of keys and values
 
-    # return a unique id of the request
-    return unique_id
+    return unique_id # return a unique id of the request
 
 ## get data from the iTunes API
 def request_itunes_data(search_string):
@@ -133,7 +133,12 @@ def request_itunes_data(search_string):
 
         return CACHE_DICTION[unique_id]
 
-# ==================== Other Function  ====================
+# ==================== Other Functions  ====================
+## ask user for input
+def prompt():
+    user_input = input("Enter a search term, or 'exit' to quit: ")
+    return user_input
+
 ## check if user input is an integer
 def check_if_num(user_input):
     try:
@@ -152,76 +157,73 @@ def launch_url(url):
     else:
         print("No URL is available.")
 
+## check what type (song/movie/other_media) the result is and create an instance accordingly
+def create_instance(result_lst):
+    # # create 3 lists for instances of Song, Movie, and Other Media
+    song_lst = []
+    movie_lst = []
+    other_lst = []
 
+    for result in user_search_results:
+        # if result is song/movie, create an instance of Song/Movie
+        # and add the instance to the song_lst/movie_lst
+        if "kind" in result:
+            if result["kind"] == "song":
+                song_lst.append(Song(json_dic = result))
+            if result["kind"] == "feature-movie":
+                movie_lst.append(Movie(json_dic = result))
+
+        # other types of results go to the other_lst
+        if "kind" not in result:
+            other_lst.append(Media(json_dic = result))
+
+    # return a dictionary of lists
+    return {"SONG:": song_lst, "MOVIE:": movie_lst, "OTHER MEDIA:": other_lst}
+
+
+# ==================== Main  ====================
 if __name__ == "__main__":
     # your control code for Part 4 (interactive search) should go here
     # prompt user for input
-    user_input = ""
-    user_input = input("Enter a search term, or 'exit' to quit: ")
+    user_input = prompt()
 
-    while user_input != "exit": # end the program if user enters "exist"
+    # end the program if user enters "exist"
+    while user_input != "exit":
 
-        # if user input is num, launch the link
-        # otherwise, make data using the string
-        if check_if_num(user_input):
-            # convert str to int and get the real index
-            index = int(user_input) - 1
-
-            # locate the data by checking the real index
-            if index < len(song_lst):
-                info_request = song_lst[index]
-            elif index < (len(song_lst) + len(movie_lst)):
-                index -= (len(song_lst) + len(movie_lst))
-                info_request = movie_lst[index]
-            else:
-                index -= (len(song_lst) + len(movie_lst) + len(other_lst))
-                info_request = other_lst[index]
-
-            # try use the url and open it in user's default web browser
-            launch_url(info_request.info)
-
-        else:
+        # if user enter a search term (str), make data using the string
+        if check_if_num(user_input) == False:
             data = request_itunes_data(user_input) # request data
-            user_search_results = data["results"] # get the dics
-
-            # create 3 lists for instances of Song, Movie, and Other Media
-            song_lst = []
-            movie_lst = []
-            other_lst = []
-
-            for result in user_search_results:
-                # if result is song/movie, create an instance of Song/Movie
-                # and add the instance to the song_lst/movie_lst
-                if "kind" in result:
-                    if result["kind"] == "song":
-                        song_lst.append(Song(json_dic = result))
-                    if result["kind"] == "feature-movie":
-                        movie_lst.append(Movie(json_dic = result))
-
-                # other types of results go to the other_lst
-                if "kind" not in result:
-                    other_lst.append(Media(json_dic = result))
+            user_search_results = data["results"] # get the dic
+            instance_lst_dic = create_instance(user_search_results) # use the dic to create instances
 
             # set an integer variable for indexing
             index_num = 1
 
-            # SONG:
-            print("\nSONG")
-            for song in song_lst:
-                print(index_num, song)
-                index_num += 1
+            # display the instances
+            for category in instance_lst_dic:
+                print(category) # show type: Song/Movie/Other Media
+                for instance in instance_lst_dic[category]: # iterate through each list
+                    print(index_num, instance) # print both the index and the instance
+                    index_num += 1
 
-            # MOVIE:
-            print("\nMOVIE")
-            for movie in movie_lst:
-                print(index_num, movie)
-                index_num += 1
+        # if user input is num, launch the link
+        else:
+            # convert str to int and get the real index
+            index = int(user_input) - 1
 
-            # OTHER MEDIA:
-            print("\nOTHER MEDIA")
-            for media in other_lst:
-                print(index_num, media)
-                index_num += 1
+            # locate the data by checking the real index
+            if index < len(instance_lst_dic["SONG:"]):
+                info_request = instance_lst_dic["SONG:"][index]
+            elif index < (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"])):
+                index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]))
+                info_request = instance_lst_dic["MOVIE:"][index]
+            else:
+                index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]) + len(instance_lst_dic["OTHER MEDIA:"]))
+                info_request = instance_lst_dic["OTHER MEDIA:"][index]
+
+            # try use the url and open it in user's default web browser
+            launch_url(info_request.info)
+
 
         # prompt user for input again
         user_input = input("Enter a number for more info, or another search term, or exit: ")
