@@ -164,7 +164,7 @@ def create_instance(result_lst):
     movie_lst = []
     other_lst = []
 
-    for result in user_search_results:
+    for result in result_lst:
         # if result is song/movie, create an instance of Song/Movie
         # and add the instance to the song_lst/movie_lst
         if "kind" in result:

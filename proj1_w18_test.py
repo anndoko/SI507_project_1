@@ -1,6 +1,10 @@
 import unittest
 import proj1_w18 as proj1
+import json
 
+
+# PART 1.
+# test the Media class
 class TestMedia(unittest.TestCase):
 
     def testConstructor(self):
@@ -12,8 +16,14 @@ class TestMedia(unittest.TestCase):
         self.assertEqual(m2.title, "1999")
         self.assertEqual(m2.author, "Prince")
 
+        # test __str__ and __len__ methods
+        self.assertEqual(m1.__str__(), "No Title by No Author (No Year)")
+        self.assertEqual(m1.__len__(), "N/A")
+        self.assertEqual(m2.__str__(), "1999 by Prince (No Year)")
+        self.assertEqual(m2.__len__(), "N/A")
+
+# test the subclass of Media: Song
 class TestSong(unittest.TestCase):
-    # test the subclass of Media: Song
     def testSongConstructor(self):
         s1 = proj1.Song()
         s2 = proj1.Song(title = "A Day In The Life", author =  "The Beatles", year = "1967", album = "Sgt. Pepper's Lonely Heart Club Band", genre = "Rock", track_len = 331000)
@@ -46,9 +56,8 @@ class TestSong(unittest.TestCase):
         self.assertEqual(s2.__str__(), "A Day In The Life by The Beatles (1967) [Rock]")
         self.assertEqual(s2.__len__(), 331)
 
-
+# test the subclass of Media: Movie
 class TestMovie(unittest.TestCase):
-    # test the subclass of Media: Movie
     def testMovieConstructor(self):
         mv1 = proj1.Movie()
         mv2 = proj1.Movie(title = "Battle of the Sexes", author = "Jonathan Dayton, Valerie Faris", year = "2017", rating = "PG-13", movie_len = 7259999)
@@ -79,10 +88,60 @@ class TestMovie(unittest.TestCase):
         self.assertEqual(mv2.__str__(), "Battle of the Sexes by Jonathan Dayton, Valerie Faris (2017) [PG-13]")
         self.assertEqual(mv2.__len__(), 121)
 
+# PART 2.
+class TestJsonDic(unittest.TestCase):
 
-	# OFFICE HOURS:
-	# use the json file provided by the class to test Part 2.
-	# for Part 3. test if the functions work and if the number of the results exceed the range
-    # should be 50 or less
+    def testCreateInstance(self):
+        # use the json file provided by the class to test Part 2.
+        f = open("sample_json.json", "r")
+        data_dic = json.load(f)
+        f.close()
+        # create instances using the create_instance function
+        instance_dic = proj1.create_instance(data_dic)
+        m1 = instance_dic["OTHER MEDIA:"][0]
+        s1 = instance_dic["SONG:"][0]
+        mv1 = instance_dic["MOVIE:"][0]
+
+        # test the instances
+        self.assertIsInstance(m1, proj1.Media)
+        self.assertIsInstance(mv1, proj1.Movie)
+        self.assertIsInstance(s1, proj1.Song)
+
+        # test the instance variables of m1
+        self.assertEqual(m1.title, "Bridget Jones's Diary (Unabridged)")
+        self.assertEqual(m1.author, "Helen Fielding")
+        self.assertEqual(m1.release_year, "2012")
+        self.assertEqual(m1.info, "No URL")
+
+        # test the instance variables of s1
+        self.assertEqual(s1.title, "Hey Jude")
+        self.assertEqual(s1.author, "The Beatles")
+        self.assertEqual(s1.release_year, "1968")
+        self.assertEqual(s1.album, "TheBeatles 1967-1970 (The Blue Album)")
+        self.assertEqual(s1.genre, "Rock")
+        self.assertEqual(s1.len, 431333)
+        self.assertEqual(s1.info, "https://itunes.apple.com/us/album/hey-jude/400835735?i=400835962&uo=4")
+
+        # test the instance variables of mv1
+        self.assertEqual(mv1.title, "Jaws")
+        self.assertEqual(mv1.author, "Steven Spielberg")
+        self.assertEqual(mv1.release_year, "1975")
+        self.assertEqual(mv1.rating, "PG")
+        self.assertEqual(mv1.len, 7451455)
+        self.assertEqual(mv1.info, "https://itunes.apple.com/us/movie/jaws/id526768967?uo=4")
+
+        # test __str__ and __len__ methods
+        # m1
+        self.assertEqual(m1.__str__(), "Bridget Jones's Diary (Unabridged) by Helen Fielding (2012)")
+        self.assertEqual(m1.__len__(), "N/A")
+        # s1
+        self.assertEqual(s1.__str__(), "Hey Jude by The Beatles (1968) [Rock]")
+        self.assertEqual(s1.__len__(), 431)
+        # mv1
+        self.assertEqual(mv1.__str__(), "Jaws by Steven Spielberg (1975) [PG]")
+        self.assertEqual(mv1.__len__(), 125)
+
+# PART 3.
+
 
 unittest.main()
