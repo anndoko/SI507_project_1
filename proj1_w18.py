@@ -14,21 +14,18 @@ class Media:
             self.release_year = year
             self.info = url
         else:
-            # for results that are not tracks, assign the value of collectionName
-            if json_dic["wrapperType"] != "track":
-                self.title = json_dic["collectionName"]
-            else:
+            # for tracks, assign the value of trackName and trackViewUrl
+            if json_dic["wrapperType"] == "track":
                 self.title = json_dic["trackName"]
+                self.info = json_dic["trackViewUrl"]
+            # for non tracks, assign the value of collectionName and collectionViewUrl
+            else:
+                self.title = json_dic["collectionName"]
+                self.info = json_dic["collectionViewUrl"]
 
             # assign values to author, and release_year
             self.author = json_dic["artistName"]
             self.release_year = json_dic["releaseDate"][0:4] # get year only
-
-            # if trackViewUrl is available, assign it to self.info
-            if "trackViewUrl" in json_dic:
-                self.info = json_dic["trackViewUrl"]
-            else:
-                self.info = url
 
     def __str__(self):
         return "{} by {} ({})".format(self.title, self.author, self.release_year)
@@ -184,8 +181,8 @@ def create_instance(result_lst):
 # ==================== Main  ====================
 if __name__ == "__main__":
     # your control code for Part 4 (interactive search) should go here
-    # prompt user for input
-    user_input = prompt()
+    user_input = prompt() # prompt user for input
+    user_search_results = {} # create an empty list to store the results
 
     # end the program if user enters "exist"
     while user_input != "exit":
@@ -193,8 +190,8 @@ if __name__ == "__main__":
         # if user enter a search term (str), make data using the string
         if check_if_num(user_input) == False:
             data = request_itunes_data(user_input) # request data
-            user_search_results = data["results"] # get the dic
-            instance_lst_dic = create_instance(user_search_results) # use the dic to create instances
+            user_search_results = data["results"] # get the dic & assign it to user_search_results
+            instance_lst_dic = create_instance(user_search_results) # create instances
 
             # set an integer variable for indexing
             index_num = 1
@@ -206,26 +203,32 @@ if __name__ == "__main__":
                     print(index_num, instance) # print both the index and the instance
                     index_num += 1
 
-        # if user input is num, launch the link
+        # if user enters a num
         else:
-            # convert str to int and get the real index
-            index = int(user_input) - 1
-
-            try:
-                # locate the data by checking the real index
-                if index < len(instance_lst_dic["SONG:"]):
-                    info_request = instance_lst_dic["SONG:"][index]
-                elif index < (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"])):
-                    index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]))
-                    info_request = instance_lst_dic["MOVIE:"][index]
+            # if user hasn't done any search yet, ask for input again
+            if user_search_results == {}:
+                user_input = input("You haven't done any search yet.\nEnter a search term, or 'exit' to quit: ")
+                continue
+            # if user has done a search before
+            else:
+                # if user's input exceeds the range, print an error message and ask for input again
+                if int(user_input) not in range(1, (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]) + len(instance_lst_dic["OTHER MEDIA:"]) + 1)):
+                    print("Please enter a valid index number.")
                 else:
-                    index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]) + len(instance_lst_dic["OTHER MEDIA:"]))
-                    info_request = instance_lst_dic["OTHER MEDIA:"][index]
+                    # convert str to int and get the real index
+                    index = int(user_input) - 1
+                    # locate the data by checking the real index
+                    if index < len(instance_lst_dic["SONG:"]):
+                        info_request = instance_lst_dic["SONG:"][index]
+                    elif index < (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"])):
+                        index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]))
+                        info_request = instance_lst_dic["MOVIE:"][index]
+                    else:
+                        index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]) + len(instance_lst_dic["OTHER MEDIA:"]))
+                        info_request = instance_lst_dic["OTHER MEDIA:"][index]
 
-                # try use the url and open it in user's default web browser
-                launch_url(info_request.info)
-            except:
-                print("Please enter a number again.")
+                    # try use the url and open it in user's default web browser
+                    launch_url(info_request.info)
 
         # prompt user for input again
         user_input = input("Enter a number for more info, or another search term, or exit: ")
