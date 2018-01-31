@@ -211,19 +211,21 @@ if __name__ == "__main__":
             # convert str to int and get the real index
             index = int(user_input) - 1
 
-            # locate the data by checking the real index
-            if index < len(instance_lst_dic["SONG:"]):
-                info_request = instance_lst_dic["SONG:"][index]
-            elif index < (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"])):
-                index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]))
-                info_request = instance_lst_dic["MOVIE:"][index]
-            else:
-                index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]) + len(instance_lst_dic["OTHER MEDIA:"]))
-                info_request = instance_lst_dic["OTHER MEDIA:"][index]
+            try:
+                # locate the data by checking the real index
+                if index < len(instance_lst_dic["SONG:"]):
+                    info_request = instance_lst_dic["SONG:"][index]
+                elif index < (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"])):
+                    index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]))
+                    info_request = instance_lst_dic["MOVIE:"][index]
+                else:
+                    index -= (len(instance_lst_dic["SONG:"]) + len(instance_lst_dic["MOVIE:"]) + len(instance_lst_dic["OTHER MEDIA:"]))
+                    info_request = instance_lst_dic["OTHER MEDIA:"][index]
 
-            # try use the url and open it in user's default web browser
-            launch_url(info_request.info)
-
+                # try use the url and open it in user's default web browser
+                launch_url(info_request.info)
+            except:
+                print("Please enter a number again.")
 
         # prompt user for input again
         user_input = input("Enter a number for more info, or another search term, or exit: ")
