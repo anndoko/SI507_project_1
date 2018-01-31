@@ -142,6 +142,59 @@ class TestJsonDic(unittest.TestCase):
         self.assertEqual(mv1.__len__(), 125)
 
 # PART 3.
+class TestAPI(unittest.TestCase):
 
+    def testQueries(self):
+        # test common word: baby
+        data1 = proj1.request_itunes_data("baby") # request data
+        user_search_results1 = data1["results"] # get the dic
+        results_dic1 = proj1.create_instance(user_search_results1) # use the dic to create instances
+
+        # test if the number of results is within the range (50)
+        num1 = 0
+        for category in results_dic1:
+            for instance in category:
+                num1 += 1
+
+        self.assertLess(num1, 50)
+
+        # test less common words: helter skelter
+        data2 = proj1.request_itunes_data("helter skelter") # request data
+        user_search_results2 = data2["results"] # get the dic
+        results_dic2 = proj1.create_instance(user_search_results2) # use the dic to create instances
+
+        # test if the number of results is within the range (50)
+        num2 = 0
+        for category in results_dic2:
+            for instance in category:
+                num2 += 1
+
+        self.assertLess(num2, 50)
+
+        # test nonsense queries: &@#!$
+        data3 = proj1.request_itunes_data("&@#!$") # request data
+        user_search_results3 = data3["results"] # get the dic
+        results_dic3 = proj1.create_instance(user_search_results3) # use the dic to create instances
+
+        # test if the number of results is within the range (50)
+        num3 = 0
+        for category in results_dic3:
+            for instance in category:
+                num3 += 1
+
+        self.assertLess(num3, 50)
+
+        # test blank
+        data4 = proj1.request_itunes_data(" ") # request data
+        user_search_results4 = data4["results"] # get the dic
+        results_dic4 = proj1.create_instance(user_search_results4) # use the dic to create instances
+
+        # test if the number of results is within the range (50)
+        num4 = 0
+        for category in results_dic4:
+            for instance in category:
+                num4 += 1
+
+        self.assertLess(num4, 50)
 
 unittest.main()
