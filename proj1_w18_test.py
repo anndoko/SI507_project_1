@@ -111,7 +111,7 @@ class TestJsonDic(unittest.TestCase):
         self.assertEqual(m1.title, "Bridget Jones's Diary (Unabridged)")
         self.assertEqual(m1.author, "Helen Fielding")
         self.assertEqual(m1.release_year, "2012")
-        self.assertEqual(m1.info, "No URL")
+        self.assertEqual(m1.info, "https://itunes.apple.com/us/audiobook/bridget-joness-diary-unabridged/id516799841?uo=4")
 
         # test the instance variables of s1
         self.assertEqual(s1.title, "Hey Jude")
